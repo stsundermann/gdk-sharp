@@ -1,0 +1,57 @@
+<?xml version="1.0"?>
+<metadata>
+	<!-- includes -->
+	<add-node path="/api"><include xml="gio-sharp-api.xml" /></add-node>
+	<add-node path="/api"><include xml="pango-sharp-api.xml" /></add-node>
+	<add-node path="/api"><include xml="glib-api.xml" /></add-node>
+	<!-- namespace changes -->
+	<attr path="/api/namespace[@name='Gdk']" name="library">libgdk-win32-3.0-0.dll</attr>
+	<attr path="/api/namespace[@name='GdkPixbuf']" name="library">libgdk_pixbuf-2.0-0.dll</attr>
+	<attr path="/api/namespace[@name='GdkPixbuf']" name="name">Gdk</attr>
+	<!-- fixes -->
+	<attr path="/api/namespace/enum[@cname='GdkEventType']/member[@cname='GDK_2BUTTON_PRESS']" name="name">TwoButtonPress</attr>
+	<attr path="/api/namespace/enum[@cname='GdkEventType']/member[@cname='GDK_3BUTTON_PRESS']" name="name">ThreeButtonPress</attr>
+	<attr path="/api/namespace/object[@cname='GdkScreen']/method[@cname='gdk_screen_width_mm']" name="hidden">true</attr>
+	<attr path="/api/namespace/object[@cname='GdkScreen']/method[@cname='gdk_screen_width']" name="hidden">true</attr>
+	<attr path="/api/namespace/object[@cname='GdkScreen']/method[@cname='gdk_screen_height_mm']" name="hidden">true</attr>
+	<attr path="/api/namespace/object[@cname='GdkScreen']/method[@cname='gdk_screen_height']" name="hidden">true</attr>
+	<attr path="/api/namespace/callback[@cname='GdkPixbufSaveFunc']/parameters/parameter[@name='buf']" name="type">gpointer</attr>
+	<attr path="/api/namespace/callback[@cname='GdkPixbufSaveFunc']/parameters" name="throws">true</attr>
+	<attr path="/api/namespace/object[@cname='GdkKeymap']/method[@name='GetEntriesForKeycode']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkKeymap']/method[@name='GetEntriesForKeyval']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='AddAlpha']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='CompositeColorSimple']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='GetFormats']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='GetPixels']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='Save']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='Savev']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='SaveToBuffer']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='SaveToBufferv']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='SaveToCallback']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='SaveToCallbackv']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/method[@name='ScaleSimple']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkPixbuf']/property[@name='Pixels']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkWindow']/method[@cname='gdk_window_set_icon_list']" name="hidden">1</attr>
+	<attr path="/api/namespace/object[@cname='GdkWindow']/method[@cname='gdk_window_invalidate_rect']/parameters/parameter[@name='rect']" name="allow-none">0</attr>
+	<attr path="/api/namespace/struct[@cname='GdkEvent*']" name="cname">GdkEvent</attr>
+	<!-- Customisations to the event system -->
+	<attr path="/api/namespace/struct[starts-with(@cname, 'GdkEvent') and string-length (@cname) > 9]" name="native">1</attr>
+	<attr path="/api/namespace/struct[starts-with(@cname, 'GdkEvent') and string-length (@cname) > 9]" name="parent">GdkEvent</attr>
+	<change-node-type path="/api/namespace/union[@cname='GdkEvent*']">struct</change-node-type>
+	<remove-node path="/api/namespace//union[@cname='GdkEvent*']//field" />
+	<add-node path="/api/namespace/union[@cname='GdkEvent*']">
+		<field cname="type" access="public" writeable="true" readable="true" name="Type" type="GdkEventType"/>
+		<field cname="window" access="public" writeable="true" readable="true" name="Window" type="GdkWindow*"/>
+		<field cname="send_event" access="public" writeable="true" readable="true" name="SendEvent" type="gint8"/>
+		<method name="GetType" cname="gdk_event_get_type" shared="true">
+			<return-type type="GType" />
+		</method>
+	</add-node>
+	<attr path="/api/namespace/struct[@cname='GdkEvent']" name="native">1</attr>
+	<attr path="/api/namespace/struct[@cname='GdkEventButton']/field[@cname='axes']" name="type">gpointer</attr>
+	<attr path="/api/namespace/struct[@cname='GdkEventMotion']/field[@cname='axes']" name="type">gpointer</attr>
+	<remove-attr path="/api/namespace/struct[@cname='GdkEventSequence']" name="native" />
+	<remove-attr path="/api/namespace/struct[@cname='GdkEventSequence']" name="parent" />
+	<remove-attr path="/api/namespace/struct[@cname='GdkEventKey']/field[@cname='is_modifier']" name="bits" />
+	<remove-attr path="/api/namespace/struct[@cname='GdkEventKey']/field[@cname='is_modifier']" type="gboolean" />
+</metadata>

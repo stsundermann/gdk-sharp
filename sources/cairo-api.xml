@@ -1,0 +1,10 @@
+<?xml version="1.0"?>
+<api>
+  <namespace name="Cairo">
+    <enum cname="cairo_content_t" name="Content" type="enum" />
+  </namespace>
+  <symbol type="manual" cname="cairo_t" name="Cairo.Context"/>
+  <!-- Support for Cairo.Region was added recently to mono starting from mono 3.1.1-->
+  <!--<symbol type="ownable" cname="cairo_region_t" name="Cairo.Region"/>-->
+  <symbol type="marshal" cname="cairo_rectangle_int_t" name="Cairo.Rectangle" marshal_type="Cairo.Rectangle" from_fmt="(Cairo.Rectangle){0}" call_fmt="{0}" />
+</api>
