@@ -173,6 +173,10 @@
       <member cname="GDK_FILTER_TRANSLATE" name="Translate" value="1"/>
       <member cname="GDK_FILTER_REMOVE" name="Remove" value="2"/>
     </enum>
+    <enum name="FullscreenMode" cname="GdkFullscreenMode" type="enum" gtype="gdk_fullscreen_mode_get_type">
+      <member cname="GDK_FULLSCREEN_ON_CURRENT_MONITOR" name="CurrentMonitor" value="0"/>
+      <member cname="GDK_FULLSCREEN_ON_ALL_MONITORS" name="AllMonitors" value="1"/>
+    </enum>
     <enum name="GrabOwnership" cname="GdkGrabOwnership" type="enum" gtype="gdk_grab_ownership_get_type">
       <member cname="GDK_OWNERSHIP_NONE" name="None" value="0"/>
       <member cname="GDK_OWNERSHIP_WINDOW" name="Window" value="1"/>
@@ -345,6 +349,16 @@
       <member cname="GDK_SMOOTH_SCROLL_MASK" name="SmoothScrollMask" value="8388608"/>
       <member cname="GDK_ALL_EVENTS_MASK" name="AllEventsMask" value="16777214"/>
     </enum>
+    <enum name="FrameClockPhase" cname="GdkFrameClockPhase" type="flags" gtype="gdk_frame_clock_phase_get_type">
+      <member cname="GDK_FRAME_CLOCK_PHASE_NONE" name="None" value="0"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_FLUSH_EVENTS" name="FlushEvents" value="1"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_BEFORE_PAINT" name="BeforePaint" value="2"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_UPDATE" name="Update" value="4"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_LAYOUT" name="Layout" value="8"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_PAINT" name="Paint" value="16"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_RESUME_EVENTS" name="ResumeEvents" value="32"/>
+      <member cname="GDK_FRAME_CLOCK_PHASE_AFTER_PAINT" name="AfterPaint" value="64"/>
+    </enum>
     <enum name="ModifierType" cname="GdkModifierType" type="flags" gtype="gdk_modifier_type_get_type">
       <member cname="GDK_SHIFT_MASK" name="ShiftMask" value="1"/>
       <member cname="GDK_LOCK_MASK" name="LockMask" value="2"/>
@@ -431,7 +445,7 @@
       <return-type type="void"/>
       <parameters>
         <parameter name="event" type="GdkEvent*"/>
-        <parameter name="data" type="gpointer"/>
+        <parameter closure="1" name="data" type="gpointer"/>
       </parameters>
     </callback>
     <callback name="FilterFunc" cname="GdkFilterFunc">
@@ -446,7 +460,7 @@
       <return-type type="gboolean"/>
       <parameters>
         <parameter name="window" type="GdkWindow*"/>
-        <parameter name="user_data" type="gpointer"/>
+        <parameter closure="1" name="user_data" type="gpointer"/>
       </parameters>
     </callback>
     <object name="AppLaunchContext" cname="GdkAppLaunchContext" abstract="false" opaque="false" hidden="false" parent="GAppLaunchContext">
@@ -1029,6 +1043,88 @@
         </parameters>
       </method>
     </object>
+    <object name="FrameClock" cname="GdkFrameClock" abstract="true" opaque="false" hidden="false" parent="GObject">
+      <class_struct cname="GdkFrameClockClass"/>
+      <method name="GetType" cname="gdk_frame_clock_get_type" shared="true">
+        <return-type type="GType"/>
+      </method>
+      <method name="BeginUpdating" cname="gdk_frame_clock_begin_updating">
+        <return-type type="void"/>
+        <parameters/>
+      </method>
+      <method name="EndUpdating" cname="gdk_frame_clock_end_updating">
+        <return-type type="void"/>
+        <parameters/>
+      </method>
+      <method name="GetCurrentTimings" cname="gdk_frame_clock_get_current_timings">
+        <return-type type="GdkFrameTimings*" owned="true">
+          <warning>missing glib:type-name</warning>
+        </return-type>
+        <parameters/>
+      </method>
+      <method name="GetFrameCounter" cname="gdk_frame_clock_get_frame_counter">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetFrameTime" cname="gdk_frame_clock_get_frame_time">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetHistoryStart" cname="gdk_frame_clock_get_history_start">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetRefreshInfo" cname="gdk_frame_clock_get_refresh_info">
+        <return-type type="void"/>
+        <parameters>
+          <parameter name="base_time" type="gint64"/>
+          <parameter name="refresh_interval_return" type="gint64"/>
+          <parameter name="presentation_time_return" type="gint64"/>
+        </parameters>
+      </method>
+      <method name="GetTimings" cname="gdk_frame_clock_get_timings">
+        <return-type type="GdkFrameTimings*" owned="true">
+          <warning>missing glib:type-name</warning>
+        </return-type>
+        <parameters>
+          <parameter name="frame_counter" type="gint64"/>
+        </parameters>
+      </method>
+      <method name="RequestPhase" cname="gdk_frame_clock_request_phase">
+        <return-type type="void"/>
+        <parameters>
+          <parameter name="phase" type="GdkFrameClockPhase"/>
+        </parameters>
+      </method>
+      <signal name="AfterPaint" cname="after-paint" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="BeforePaint" cname="before-paint" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="FlushEvents" cname="flush-events" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="Layout" cname="layout" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="Paint" cname="paint" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="ResumeEvents" cname="resume-events" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+      <signal name="Update" cname="update" when="last">
+        <return-type type="void"/>
+        <parameters/>
+      </signal>
+    </object>
     <object name="Keymap" cname="GdkKeymap" abstract="false" opaque="false" hidden="false" parent="GObject">
       <method name="GetType" cname="gdk_keymap_get_type" shared="true">
         <return-type type="GType"/>
@@ -1535,7 +1631,7 @@
           <parameter name="timestamp" type="guint32"/>
         </parameters>
       </method>
-      <method name="ConfigureFinished" cname="gdk_window_configure_finished">
+      <method name="ConfigureFinished" cname="gdk_window_configure_finished" deprecated="true">
         <return-type type="void"/>
         <parameters/>
       </method>
@@ -1579,7 +1675,7 @@
         <return-type type="void"/>
         <parameters/>
       </method>
-      <method name="EnableSynchronizedConfigure" cname="gdk_window_enable_synchronized_configure">
+      <method name="EnableSynchronizedConfigure" cname="gdk_window_enable_synchronized_configure" deprecated="true">
         <return-type type="void"/>
         <parameters/>
       </method>
@@ -1698,11 +1794,19 @@
         <return-type type="gboolean"/>
         <parameters/>
       </method>
+      <method name="GetFrameClock" cname="gdk_window_get_frame_clock">
+        <return-type type="GdkFrameClock*"/>
+        <parameters/>
+      </method>
       <method name="GetFrameExtents" cname="gdk_window_get_frame_extents">
         <return-type type="void"/>
         <parameters>
           <parameter name="rect" type="cairo_rectangle_int_t" pass_as="out"/>
         </parameters>
+      </method>
+      <method name="GetFullscreenMode" cname="gdk_window_get_fullscreen_mode">
+        <return-type type="GdkFullscreenMode"/>
+        <parameters/>
       </method>
       <method name="GetGeometry" cname="gdk_window_get_geometry">
         <return-type type="void"/>
@@ -2060,6 +2164,12 @@
         <return-type type="void"/>
         <parameters>
           <parameter name="focus_on_map" type="gboolean"/>
+        </parameters>
+      </method>
+      <method name="SetFullscreenMode" cname="gdk_window_set_fullscreen_mode">
+        <return-type type="void"/>
+        <parameters>
+          <parameter name="mode" type="GdkFullscreenMode"/>
         </parameters>
       </method>
       <method name="SetFunctions" cname="gdk_window_set_functions">
@@ -2771,6 +2881,46 @@
       <field cname="changed_mask" access="public" writeable="true" readable="true" name="ChangedMask" type="GdkWindowState"/>
       <field cname="new_window_state" access="public" writeable="true" readable="true" name="NewWindowState" type="GdkWindowState"/>
     </struct>
+    <struct name="FrameClockPrivate" cname="GdkFrameClockPrivate" opaque="true" hidden="true"/>
+    <boxed name="FrameTimings" cname="GdkFrameTimings" opaque="false" hidden="false">
+      <method name="GetType" cname="gdk_frame_timings_get_type" shared="true">
+        <return-type type="GType"/>
+      </method>
+      <method name="GetComplete" cname="gdk_frame_timings_get_complete">
+        <return-type type="gboolean"/>
+        <parameters/>
+      </method>
+      <method name="GetFrameCounter" cname="gdk_frame_timings_get_frame_counter">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetFrameTime" cname="gdk_frame_timings_get_frame_time">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetPredictedPresentationTime" cname="gdk_frame_timings_get_predicted_presentation_time">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetPresentationTime" cname="gdk_frame_timings_get_presentation_time">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="GetRefreshInterval" cname="gdk_frame_timings_get_refresh_interval">
+        <return-type type="gint64"/>
+        <parameters/>
+      </method>
+      <method name="Ref" cname="gdk_frame_timings_ref">
+        <return-type type="GdkFrameTimings*" owned="true">
+          <warning>missing glib:type-name</warning>
+        </return-type>
+        <parameters/>
+      </method>
+      <method name="Unref" cname="gdk_frame_timings_unref">
+        <return-type type="void"/>
+        <parameters/>
+      </method>
+    </boxed>
     <struct name="Geometry" cname="GdkGeometry" opaque="false" hidden="false">
       <field cname="min_width" access="public" writeable="true" readable="true" name="MinWidth" type="gint"/>
       <field cname="min_height" access="public" writeable="true" readable="true" name="MinHeight" type="gint"/>
@@ -5997,7 +6147,7 @@
       <return-type type="void"/>
       <parameters>
         <parameter name="pixels" type="guchar*" array="true"/>
-        <parameter name="data" type="gpointer"/>
+        <parameter closure="1" name="data" type="gpointer"/>
       </parameters>
     </callback>
     <callback name="PixbufSaveFunc" cname="GdkPixbufSaveFunc">
@@ -6008,7 +6158,7 @@
         <parameter name="error" type="GError**" owned="true" pass_as="out">
           <warning>missing glib:type-name</warning>
         </parameter>
-        <parameter name="data" type="gpointer"/>
+        <parameter closure="3" name="data" type="gpointer"/>
       </parameters>
     </callback>
     <object name="Pixbuf" cname="GdkPixbuf" abstract="false" opaque="false" hidden="false" parent="GObject">
@@ -6688,9 +6838,9 @@
       <constant value="1" ctype="gint" gtype="gint" name="PIXBUF_FEATURES_H"/>
       <constant value="1197763408" ctype="gint" gtype="gint" name="PIXBUF_MAGIC_NUMBER"/>
       <constant value="2" ctype="gint" gtype="gint" name="PIXBUF_MAJOR"/>
-      <constant value="0" ctype="gint" gtype="gint" name="PIXBUF_MICRO"/>
+      <constant value="2" ctype="gint" gtype="gint" name="PIXBUF_MICRO"/>
       <constant value="28" ctype="gint" gtype="gint" name="PIXBUF_MINOR"/>
-      <constant value="2.28.0" ctype="gchar*" gtype="gchar*" name="PIXBUF_VERSION"/>
+      <constant value="2.28.2" ctype="gchar*" gtype="gchar*" name="PIXBUF_VERSION"/>
       <constant value="24" ctype="gint" gtype="gint" name="PIXDATA_HEADER_LENGTH"/>
     </object>
   </namespace>
